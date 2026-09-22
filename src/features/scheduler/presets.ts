@@ -29,12 +29,22 @@ export function createProcesses(count: number): ProcessInput[] {
   }))
 }
 
+export function createBlankProcesses(count: number): ProcessInput[] {
+  return Array.from({ length: count }, (_, index) => ({
+    id: '',
+    arrivalTime: '' as unknown as number,
+    burstTime: '' as unknown as number,
+    priority: '' as unknown as number,
+    inputOrder: index,
+  }))
+}
+
 export function randomProcesses(count: number): ProcessInput[] {
   return Array.from({ length: count }, (_, index) => ({
     id: `P${index + 1}`,
     arrivalTime: Math.floor(Math.random() * Math.max(1, count + 2)),
     burstTime: Math.floor(Math.random() * 7) + 1,
-    priority: Math.floor(Math.random() * 5),
+    priority: Math.floor(Math.random() * 5) + 1,
     inputOrder: index,
   }))
 }

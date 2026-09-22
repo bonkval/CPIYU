@@ -57,9 +57,10 @@ export function GanttChart({
       >
         {result.slices.map((slice, index) => {
           const processIndex = slice.processId
-            ? Math.max(0, Number.parseInt(slice.processId.replace(/\D/g, ''), 10) - 1)
+            ? Math.max(0, result.metrics.findIndex((metric) => metric.processId === slice.processId))
             : 0
           const active = selectedTime >= slice.start && selectedTime < slice.end
+          const labelLength = slice.processId?.length ?? 4
           return (
             <button
               key={`${slice.processId ?? 'idle'}-${slice.start}`}
@@ -67,6 +68,7 @@ export function GanttChart({
               className="gantt-slice"
               style={{
                 flexGrow: slice.end - slice.start,
+                minWidth: `${Math.min(320, Math.max(76, labelLength * 9 + 28))}px`,
                 background: slice.processId ? processColors[processIndex % processColors.length] : 'var(--idle)',
               }}
               data-active={active || undefined}
@@ -84,7 +86,7 @@ export function GanttChart({
               }}
               aria-label={`${slice.processId ?? 'CPU idle'} from time ${slice.start} to ${slice.end}`}
             >
-              <strong>{slice.processId ?? 'IDLE'}</strong>
+              <strong title={slice.processId ?? 'IDLE'}>{slice.processId ?? 'IDLE'}</strong>
               <span>{slice.start}-{slice.end}</span>
               {focusedSlice === index ? <i className="sr-only">Selected timeline segment</i> : null}
             </button>

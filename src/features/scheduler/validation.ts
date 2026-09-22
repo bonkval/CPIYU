@@ -10,6 +10,7 @@ export function validateProcesses(processes: ProcessInput[]): ValidationErrors {
   processes.forEach((process, index) => {
     const rowErrors: Partial<Record<ProcessField, string>> = {}
     if (!process.id.trim()) rowErrors.id = 'Process ID is required.'
+    else if (process.id.length > 25) rowErrors.id = 'Use no more than 25 characters.'
     else if (normalizedIds.filter((id) => id === normalizedIds[index]).length > 1) {
       rowErrors.id = 'Process IDs must be unique.'
     }
@@ -19,8 +20,8 @@ export function validateProcesses(processes: ProcessInput[]): ValidationErrors {
     if (!Number.isInteger(process.burstTime) || process.burstTime <= 0) {
       rowErrors.burstTime = 'Use an integer greater than 0.'
     }
-    if (!Number.isInteger(process.priority) || process.priority < 0 || process.priority > 99) {
-      rowErrors.priority = 'Use an integer from 0 to 99.'
+    if (!Number.isInteger(process.priority) || process.priority < 1 || process.priority > 99) {
+      rowErrors.priority = 'Use an integer from 1 to 99.'
     }
     if (Object.keys(rowErrors).length > 0) errors[index] = rowErrors
   })
@@ -33,4 +34,3 @@ export function validateProcesses(processes: ProcessInput[]): ValidationErrors {
 
 export const hasValidationErrors = (errors: ValidationErrors) =>
   Object.keys(errors).length > 0
-

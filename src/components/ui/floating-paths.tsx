@@ -15,11 +15,14 @@ export function FloatingPathsBackground({
   children,
 }: FloatingPathsBackgroundProps) {
   const paths = Array.from({ length: 58 }, (_, index) => {
-    const offset = index * 13
-    const bend = position * (index % 2 === 0 ? 1 : -1)
+    const offset = index * 14
+    const direction = position * (index % 2 === 0 ? 1 : -1)
+    const y = 30 + offset
     return {
       id: index,
-      d: `M-${260 + offset * bend} ${120 + offset} C ${220 + offset * bend} ${20 - offset} ${420 - offset * bend} ${480 + offset} ${980 + offset * bend} ${180 + offset}`,
+      // Both ends sit well outside the viewBox so no path endpoint can create
+      // a visible diagonal cutoff on wide or tall screens.
+      d: `M -900 ${y} C -260 ${y - 250 * direction} 180 ${y + 240 * direction} 600 ${y} C 1020 ${y - 240 * direction} 1460 ${y + 250 * direction} 2100 ${y}`,
       duration: 16 + (index % 7) * 2,
       delay: -(index % 9) * 1.35,
       opacity: 0.24 + (index % 6) * 0.035,
@@ -28,7 +31,7 @@ export function FloatingPathsBackground({
 
   return (
     <div className={cn('floating-paths', className)} aria-hidden="true">
-      <svg viewBox="0 0 1200 800" preserveAspectRatio="none">
+      <svg viewBox="0 0 1200 840" preserveAspectRatio="none">
         {paths.map((path) => (
           <motion.path
             key={path.id}

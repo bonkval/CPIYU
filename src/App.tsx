@@ -24,7 +24,7 @@ import { GanttChart } from '@/components/simulator/gantt-chart'
 import { Dock, DockIcon, DockItem, DockLabel } from '@/components/ui/dock'
 import { FloatingPathsBackground } from '@/components/ui/floating-paths'
 import { TooltipProvider } from '@/components/ui/tooltip'
-import { createProcesses, exampleProcesses, exampleProcessesForCount, randomProcesses } from '@/features/scheduler/presets'
+import { createBlankProcesses, createProcesses, exampleProcesses, exampleProcessesForCount, randomProcesses } from '@/features/scheduler/presets'
 import { simulatePreemptivePriority } from '@/features/scheduler/preemptive-priority'
 import type { AnalysisResult, ProcessInput } from '@/features/scheduler/types'
 import {
@@ -75,7 +75,11 @@ function reducer(state: State, action: Action): State {
           if (index !== action.index) return process
           return {
             ...process,
-            [action.field]: action.field === 'id' ? action.value : Number(action.value),
+            [action.field]: action.field === 'id'
+              ? action.value
+              : action.value === ''
+                ? ('' as unknown as number)
+                : Number(action.value),
           }
         }),
       }
@@ -84,16 +88,16 @@ function reducer(state: State, action: Action): State {
       const processes = exampleProcessesForCount(action.count ?? state.processes.length)
       return {
         processes,
-        result: simulatePreemptivePriority(processes),
+        result: null,
         attempted: false,
       }
       }
     case 'randomize': {
       const processes = randomProcesses(state.processes.length)
-      return { processes, result: simulatePreemptivePriority(processes), attempted: false }
+      return { processes, result: null, attempted: false }
     }
     case 'clear':
-      return { processes: createProcesses(3), result: null, attempted: false }
+      return { processes: createBlankProcesses(state.processes.length), result: null, attempted: false }
     case 'analyze':
       return { ...state, result: action.result, attempted: true }
   }
@@ -370,8 +374,9 @@ function App() {
                         autoComplete="off"
                         spellCheck={field === 'id' ? false : undefined}
                         inputMode={field === 'id' ? undefined : 'numeric'}
-                        min={field === 'burstTime' ? 1 : 0}
+                        min={field === 'burstTime' || field === 'priority' ? 1 : 0}
                         max={field === 'priority' ? 99 : undefined}
+                        maxLength={field === 'id' ? 25 : undefined}
                         value={process[field]}
                         onChange={(event) => dispatch({ type: 'update', index, field, value: event.target.value })}
                         aria-invalid={Boolean(error)}

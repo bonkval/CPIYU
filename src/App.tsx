@@ -170,19 +170,37 @@ function PortfolioCursor() {
 
 function PointerEffects() {
   useEffect(() => {
-    if (!matchMedia('(pointer: fine)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const root = document.documentElement
+    const finePointer = matchMedia('(pointer: fine)').matches
     const move = (event: PointerEvent) => {
+      if (!finePointer) return
       root.style.setProperty('--pointer-x', `${event.clientX}px`)
       root.style.setProperty('--pointer-y', `${event.clientY}px`)
     }
     const down = (event: PointerEvent) => {
-      const ripple = document.createElement('span')
-      ripple.className = 'click-ripple'
-      ripple.style.left = `${event.clientX}px`
-      ripple.style.top = `${event.clientY}px`
-      document.body.append(ripple)
-      ripple.addEventListener('animationend', () => ripple.remove(), { once: true })
+      const button = event.target instanceof Element
+        ? event.target.closest<HTMLButtonElement>('button:not(:disabled)')
+        : null
+      if (!button) return
+
+      const splash = document.createElement('span')
+      splash.className = 'button-splash'
+      splash.style.left = `${event.clientX}px`
+      splash.style.top = `${event.clientY}px`
+      for (let index = 0; index < 9; index += 1) {
+        const drop = document.createElement('i')
+        const angle = (index / 9) * Math.PI * 2
+        const distance = 34 + (index % 3) * 9
+        drop.style.setProperty('--splash-x', `${Math.cos(angle) * distance}px`)
+        drop.style.setProperty('--splash-y', `${Math.sin(angle) * distance}px`)
+        drop.style.setProperty('--splash-delay', `${index * 8}ms`)
+        splash.append(drop)
+      }
+      document.body.append(splash)
+      splash.addEventListener('animationend', (animationEvent) => {
+        if (animationEvent.target === splash) splash.remove()
+      })
     }
     window.addEventListener('pointermove', move, { passive: true })
     window.addEventListener('pointerdown', down, { passive: true })

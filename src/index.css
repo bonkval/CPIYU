@@ -231,22 +231,27 @@ tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
 .dock-divider { width: 1px; height: 2rem; background: var(--line); }
 .pointer-aura { position: fixed; left: var(--pointer-x, 50vw); top: var(--pointer-y, 40vh); z-index: -1; width: 22rem; height: 22rem; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--accent-violet) 10%, transparent), transparent 68%); transform: translate(-50%, -50%); pointer-events: none; mix-blend-mode: multiply; }
 :root[data-theme="dark"] .pointer-aura { mix-blend-mode: screen; opacity: .65; }
-.button-splash { position: fixed; z-index: 2147483641; width: 1px; height: 1px; pointer-events: none; animation: splash-lifetime .85s linear forwards; }
+.button-splash { position: fixed; z-index: 2147483641; width: 1px; height: 1px; pointer-events: none; animation: splash-lifetime .65s linear forwards; }
 .button-splash::before, .button-splash::after { content: ""; position: absolute; left: 0; top: 0; border-radius: 50%; transform: translate(-50%, -50%); }
-.button-splash::before { width: 1.7rem; height: 1.7rem; border: 4px solid var(--accent-violet); box-shadow: 0 0 1.5rem color-mix(in srgb, var(--accent-violet) 82%, transparent); animation: splash-ring .78s cubic-bezier(.12,.72,.18,1) forwards; }
-.button-splash::after { width: .9rem; height: .9rem; background: var(--accent-violet); animation: splash-core .64s cubic-bezier(.2,.8,.2,1) forwards; }
-.button-splash i { --splash-x: 0px; --splash-y: 0px; --splash-delay: 0ms; position: absolute; left: 0; top: 0; width: .38rem; height: .38rem; border-radius: 55% 45% 60% 40%; background: var(--accent-violet); box-shadow: 0 0 .65rem color-mix(in srgb, var(--accent-violet) 65%, transparent); animation: splash-drop .58s var(--splash-delay) cubic-bezier(.12,.72,.18,1) both; }
-button.is-splashing { animation: button-splash-glow .85s cubic-bezier(.16,.8,.2,1); }
-@keyframes button-splash-glow { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent-violet) 72%, transparent); filter: brightness(1); } 28% { box-shadow: 0 0 0 .42rem color-mix(in srgb, var(--accent-violet) 34%, transparent), 0 0 1.4rem color-mix(in srgb, var(--accent-violet) 60%, transparent); filter: brightness(1.22); } 100% { box-shadow: 0 0 0 .85rem transparent, 0 0 1.8rem transparent; filter: brightness(1); } }
-@keyframes splash-ring { from { opacity: 1; transform: translate(-50%, -50%) scale(.2); } to { opacity: 0; transform: translate(-50%, -50%) scale(5.8); } }
-@keyframes splash-core { 0% { opacity: .95; transform: translate(-50%, -50%) scale(.35); } 55% { opacity: .8; transform: translate(-50%, -50%) scale(1.7); } 100% { opacity: 0; transform: translate(-50%, -50%) scale(2.3); } }
-@keyframes splash-drop { 0% { opacity: 0; transform: translate(-50%, -50%) scale(.2); } 18% { opacity: 1; } 100% { opacity: 0; transform: translate(calc(-50% + var(--splash-x)), calc(-50% + var(--splash-y))) scale(.65) rotate(105deg); } }
+.button-splash::before { width: 1.25rem; height: 1.25rem; border: 2px solid var(--accent-violet); box-shadow: 0 0 .8rem color-mix(in srgb, var(--accent-violet) 55%, transparent); animation: splash-ring .6s cubic-bezier(.12,.72,.18,1) forwards; }
+.button-splash::after { width: .55rem; height: .55rem; background: var(--accent-violet); animation: splash-core .48s cubic-bezier(.2,.8,.2,1) forwards; }
+.button-splash i { --splash-x: 0px; --splash-y: 0px; --splash-delay: 0ms; position: absolute; left: 0; top: 0; width: .25rem; height: .25rem; border-radius: 55% 45% 60% 40%; background: var(--accent-violet); animation: splash-drop .5s var(--splash-delay) cubic-bezier(.12,.72,.18,1) both; }
+button.is-splashing { animation: button-splash-glow .65s cubic-bezier(.16,.8,.2,1); }
+@keyframes button-splash-glow { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent-violet) 48%, transparent); filter: brightness(1); } 28% { box-shadow: 0 0 0 .25rem color-mix(in srgb, var(--accent-violet) 20%, transparent), 0 0 .75rem color-mix(in srgb, var(--accent-violet) 35%, transparent); filter: brightness(1.1); } 100% { box-shadow: 0 0 0 .55rem transparent, 0 0 1rem transparent; filter: brightness(1); } }
+@keyframes splash-ring { from { opacity: .85; transform: translate(-50%, -50%) scale(.3); } to { opacity: 0; transform: translate(-50%, -50%) scale(4); } }
+@keyframes splash-core { 0% { opacity: .8; transform: translate(-50%, -50%) scale(.4); } 100% { opacity: 0; transform: translate(-50%, -50%) scale(1.7); } }
+@keyframes splash-drop { 0% { opacity: 0; transform: translate(-50%, -50%) scale(.2); } 20% { opacity: .75; } 100% { opacity: 0; transform: translate(calc(-50% + var(--splash-x)), calc(-50% + var(--splash-y))) scale(.5) rotate(80deg); } }
 @keyframes splash-lifetime { from { opacity: 1; } to { opacity: .999; } }
 .portfolio-cursor { position: fixed; left: 0; top: 0; z-index: 2147483647; width: 1.8rem; height: 1.8rem; margin: -.9rem 0 0 -.9rem; opacity: 0; pointer-events: none; mix-blend-mode: difference; transform: translate3d(-100px,-100px,0); transition: opacity .18s, width .18s, height .18s; will-change: transform; }
 .portfolio-cursor.is-visible { opacity: 1; }.cursor-core { position: absolute; left: 50%; top: 50%; width: .3rem; height: .3rem; border-radius: 50%; background: white; transform: translate(-50%,-50%); }.cursor-orbit { position: absolute; inset: 0; border: 1px solid white; border-radius: 50%; }.cursor-orbit::after { content: ""; position: absolute; inset: -.45rem; border: 1px dashed rgb(255 255 255 / 70%); border-radius: 50%; animation: cursor-spin 7s linear infinite; }.cursor-pulse { position: absolute; inset: -.15rem; border: 1px solid white; border-radius: 50%; opacity: 0; }.portfolio-cursor.is-hovering { width: 2.6rem; height: 2.6rem; margin: -1.3rem 0 0 -1.3rem; }.portfolio-cursor.is-hovering .cursor-orbit { transform: scale(.72); }.portfolio-cursor.is-clicking .cursor-pulse { animation: cursor-shock .65s cubic-bezier(.15,.7,.2,1) forwards; }
+.portfolio-cursor.is-editing { width: 1.2rem; height: 2rem; margin: -1rem 0 0 -.6rem; mix-blend-mode: normal; }
+.portfolio-cursor.is-editing .cursor-core { opacity: 0; }
+.portfolio-cursor.is-editing .cursor-orbit { inset: .12rem .52rem; border: 0; border-radius: 999px; background: var(--accent-violet); box-shadow: 0 0 .5rem color-mix(in srgb, var(--accent-violet) 65%, transparent); transform: none; animation: editing-cursor-pulse 1s ease-in-out infinite; }
+.portfolio-cursor.is-editing .cursor-orbit::after { display: none; }
+@keyframes editing-cursor-pulse { 50% { opacity: .55; transform: scaleY(.82); } }
 @keyframes cursor-spin { to { transform: rotate(360deg); } } @keyframes cursor-shock { from { opacity: 1; transform: scale(.25); } to { opacity: 0; transform: scale(2.7); } }
 :root.cursor-ready body, :root.cursor-ready a, :root.cursor-ready button, :root.cursor-ready select, :root.cursor-ready [role="application"] { cursor: none; }
-:root.cursor-ready input { cursor: text; }
+:root.cursor-ready input, :root.cursor-ready textarea, :root.cursor-ready [contenteditable="true"] { cursor: none; }
 
 @media (max-width: 900px) {
   .site-header { grid-template-columns: 1fr auto; }

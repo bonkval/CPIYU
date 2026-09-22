@@ -145,8 +145,14 @@ function PortfolioCursor() {
     const move = (event: PointerEvent) => {
       cursor.style.transform = `translate3d(${event.clientX}px, ${event.clientY}px, 0)`
       cursor.classList.add('is-visible')
-      const target = event.target instanceof Element ? event.target.closest('a, button, select, [role="application"]') : null
+      const editing = event.target instanceof Element
+        ? event.target.closest('input, textarea, [contenteditable="true"]')
+        : null
+      const target = event.target instanceof Element
+        ? event.target.closest('a, button, select, input, textarea, [contenteditable="true"], [role="application"]')
+        : null
       cursor.classList.toggle('is-hovering', Boolean(target))
+      cursor.classList.toggle('is-editing', Boolean(editing))
     }
     const leave = () => cursor.classList.remove('is-visible')
     const down = () => {
@@ -184,16 +190,16 @@ function PointerEffects() {
 
       button.classList.remove('is-splashing')
       requestAnimationFrame(() => button.classList.add('is-splashing'))
-      window.setTimeout(() => button.classList.remove('is-splashing'), 850)
+      window.setTimeout(() => button.classList.remove('is-splashing'), 650)
 
       const splash = document.createElement('span')
       splash.className = 'button-splash'
       splash.style.left = `${event.clientX}px`
       splash.style.top = `${event.clientY}px`
-      for (let index = 0; index < 9; index += 1) {
+      for (let index = 0; index < 6; index += 1) {
         const drop = document.createElement('i')
-        const angle = (index / 9) * Math.PI * 2
-        const distance = 34 + (index % 3) * 9
+        const angle = (index / 6) * Math.PI * 2
+        const distance = 22 + (index % 2) * 6
         drop.style.setProperty('--splash-x', `${Math.cos(angle) * distance}px`)
         drop.style.setProperty('--splash-y', `${Math.sin(angle) * distance}px`)
         drop.style.setProperty('--splash-delay', `${index * 8}ms`)

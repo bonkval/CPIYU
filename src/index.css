@@ -302,12 +302,6 @@ button.is-splashing { animation: button-splash-glow .85s cubic-bezier(.16,.8,.2,
   .gantt-slice { cursor: pointer; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
-  .pointer-aura, .button-splash, .portfolio-cursor, .theme-sweep { display: none; }
-}
-
 @media (prefers-reduced-transparency: reduce) {
   .site-header, .dock-panel { background: var(--panel); backdrop-filter: none; }
 }

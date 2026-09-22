@@ -6,7 +6,6 @@ import {
   type MotionValue,
   type SpringOptions,
   useMotionValue,
-  useReducedMotion,
   useSpring,
   useTransform,
 } from 'framer-motion'
@@ -78,7 +77,6 @@ function Dock({
 }: DockProps) {
   const mouseX = useMotionValue(Infinity)
   const isHovered = useMotionValue(0)
-  const prefersReducedMotion = useReducedMotion()
   const maxHeight = useMemo(
     () => Math.max(DOCK_HEIGHT, magnification + magnification / 2),
     [magnification],
@@ -88,12 +86,11 @@ function Dock({
 
   return (
     <motion.div
-      style={{ height: prefersReducedMotion ? panelHeight : height, scrollbarWidth: 'none' }}
+      style={{ height, scrollbarWidth: 'none' }}
       className="flex max-w-[calc(100vw-1rem)] items-end overflow-x-auto px-1"
     >
       <motion.div
         onMouseMove={({ clientX }) => {
-          if (prefersReducedMotion) return
           isHovered.set(1)
           mouseX.set(clientX)
         }}
@@ -112,7 +109,7 @@ function Dock({
             spring,
             distance,
             magnification,
-            reduceMotion: Boolean(prefersReducedMotion),
+            reduceMotion: false,
           }}
         >
           {children}

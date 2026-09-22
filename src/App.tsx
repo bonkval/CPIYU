@@ -135,8 +135,7 @@ function useTheme() {
 function PortfolioCursor() {
   useEffect(() => {
     const finePointer = matchMedia('(pointer: fine)')
-    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)')
-    if (!finePointer.matches || reducedMotion.matches) return
+    if (!finePointer.matches) return
     const cursor = document.createElement('div')
     cursor.className = 'portfolio-cursor'
     cursor.setAttribute('aria-hidden', 'true')
@@ -170,7 +169,6 @@ function PortfolioCursor() {
 
 function PointerEffects() {
   useEffect(() => {
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const root = document.documentElement
     const finePointer = matchMedia('(pointer: fine)').matches
     const move = (event: PointerEvent) => {

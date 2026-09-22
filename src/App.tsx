@@ -204,6 +204,16 @@ function App() {
   const errors = useMemo(() => validateProcesses(state.processes), [state.processes])
   const activeTime = previewTime ?? selectedTime
   const snapshot = state.result?.snapshots[Math.min(activeTime, Math.max(0, state.result.snapshots.length - 1))]
+  const activeSlice = state.result?.slices.find((slice) => activeTime >= slice.start && activeTime < slice.end)
+  const explanation = activeSlice?.reason === 'preemption'
+    ? `At t = ${activeTime}, ${activeSlice.processId ?? 'the CPU'} takes over because a newly available process has a lower priority number than the process that was running.`
+    : activeSlice?.reason === 'completion'
+      ? `At t = ${activeTime}, the previous process finished its burst. The scheduler checks the ready queue and dispatches the next highest-priority process.`
+      : activeSlice?.reason === 'idle'
+        ? `At t = ${activeTime}, no process has arrived yet. The CPU stays idle until the next arrival time.`
+        : activeSlice?.processId
+          ? `At t = ${activeTime}, ${activeSlice.processId} is running. It has the smallest priority value among the processes that have arrived.`
+          : 'Run the timeline to see why the scheduler makes each decision.'
 
   useEffect(() => {
     if (!isPlaying || !state.result) return
@@ -267,11 +277,11 @@ function App() {
       <PortfolioCursor />
       <a className="skip-link" href="#processes">Skip to process input</a>
       <header className="site-header">
-        <a href="#top" className="brand" aria-label="CPIYU CPU scheduling lab home">
-          <span className="brand-mark" aria-hidden="true"><i /><i /><i /><i /></span>
-          <span className="brand-copy"><strong>CPIYU</strong><small>CPU scheduling lab</small></span>
+        <a href="#top" className="brand" aria-label="CPIYU home">
+          <span className="brand-mark" aria-hidden="true"><b>C</b><i /><i /><i /></span>
+          <span className="brand-copy"><strong>CPIYU</strong></span>
         </a>
-        <div className="header-system" aria-live="polite"><span className="system-pulse" /><span>Scheduler online</span><code>{state.processes.length} processes</code></div>
+        <p className="topic-banner">PRIORITY CPU SCHEDULING ALGORITHM: PREEMPTIVE</p>
         <nav className="header-nav" aria-label="Page sections"><a href="#guide">Guide</a><a href="#processes">Workspace</a><a href="#results">Results</a></nav>
       </header>
 
@@ -288,11 +298,11 @@ function App() {
               <button type="button" className="text-action" onClick={loadExample}>Load the class example</button>
             </div>
           </div>
-          <div className="hero-visual" aria-label="Scheduling model overview">
-            <div className="visual-row incoming"><span>P1</span><span>P2</span><span>P3</span></div>
-            <div className="visual-arrow">Arrival queue</div>
-            <div className="visual-cpu"><small>CPU</small><strong>P2</strong><em>Priority 1</em></div>
-            <div className="visual-note">Higher-priority arrivals can interrupt the running process.</div>
+          <div className="briefing-card" aria-label="Algorithm briefing">
+            <span className="section-kicker">Algorithm briefing</span>
+            <h2>One rule. Every moment.</h2>
+            <p>At each unit of time, the CPU compares every process that has arrived. The smallest priority number wins.</p>
+            <ol><li><strong>Arrive</strong><span>Enter the ready queue.</span></li><li><strong>Compare</strong><span>Check priority values.</span></li><li><strong>Preempt</strong><span>Interrupt when a stronger process appears.</span></li></ol>
           </div>
         </section>
 
@@ -404,6 +414,7 @@ function App() {
                 <div className="inspector-time"><strong>{activeTime}</strong><span>current time</span></div>
                 <dl><div><dt>CPU</dt><dd>{snapshot?.runningProcessId ?? 'Idle'}</dd></div><div><dt>Remaining burst</dt><dd>{snapshot?.runningProcessId ? snapshot.remainingTimes[snapshot.runningProcessId] : '-'}</dd></div></dl>
                 <div className="ready-queue"><h3>Ready Queue</h3>{snapshot?.readyQueue.length ? <ol>{snapshot.readyQueue.map((entry) => <li key={entry.processId}><strong>{entry.processId}</strong><span>Priority {entry.priority}</span><em>{entry.remainingTime} remaining</em></li>)}</ol> : <p>No processes are waiting.</p>}</div>
+                <div className="decision-explanation"><span>What is happening?</span><p>{explanation}</p></div>
               </aside>
             </div>
 

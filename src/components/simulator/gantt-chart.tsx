@@ -15,6 +15,7 @@ type GanttChartProps = {
   selectedTime: number
   onSelectTime: (time: number) => void
   onPreviewTime: (time: number | null) => void
+  isPlaying?: boolean
 }
 
 export function GanttChart({
@@ -22,6 +23,7 @@ export function GanttChart({
   selectedTime,
   onSelectTime,
   onPreviewTime,
+  isPlaying = false,
 }: GanttChartProps) {
   const chartRef = useRef<HTMLDivElement>(null)
   const [focusedSlice, setFocusedSlice] = useState<number | null>(null)
@@ -45,6 +47,7 @@ export function GanttChart({
       <div
         ref={chartRef}
         className="gantt-track"
+        data-playing={isPlaying || undefined}
         onMouseMove={(event) => onPreviewTime(getTimeFromPointer(event))}
         onMouseLeave={() => onPreviewTime(null)}
         onClick={(event) => onSelectTime(getTimeFromPointer(event))}
@@ -100,4 +103,3 @@ export function GanttChart({
     </div>
   )
 }
-

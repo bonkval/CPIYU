@@ -6,6 +6,19 @@ export const exampleProcesses: ProcessInput[] = [
   { id: 'P3', arrivalTime: 2, burstTime: 2, priority: 2, inputOrder: 2 },
 ]
 
+export function exampleProcessesForCount(count: number): ProcessInput[] {
+  return Array.from({ length: Math.max(1, count) }, (_, index) => {
+    const template = exampleProcesses[index % exampleProcesses.length]
+    const round = Math.floor(index / exampleProcesses.length)
+    return {
+      ...template,
+      id: `P${index + 1}`,
+      arrivalTime: template.arrivalTime + round * 2,
+      inputOrder: index,
+    }
+  })
+}
+
 export function createProcesses(count: number): ProcessInput[] {
   return Array.from({ length: count }, (_, index) => ({
     id: `P${index + 1}`,

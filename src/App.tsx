@@ -22,8 +22,9 @@ import {
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react'
 import { GanttChart } from '@/components/simulator/gantt-chart'
 import { Dock, DockIcon, DockItem, DockLabel } from '@/components/ui/dock'
+import { FloatingPathsBackground } from '@/components/ui/floating-paths'
 import { TooltipProvider } from '@/components/ui/tooltip'
-import { createProcesses, exampleProcesses, randomProcesses } from '@/features/scheduler/presets'
+import { createProcesses, exampleProcesses, exampleProcessesForCount, randomProcesses } from '@/features/scheduler/presets'
 import { simulatePreemptivePriority } from '@/features/scheduler/preemptive-priority'
 import type { AnalysisResult, ProcessInput } from '@/features/scheduler/types'
 import {
@@ -41,7 +42,7 @@ type State = {
 type Action =
   | { type: 'set-count'; count: number }
   | { type: 'update'; index: number; field: ProcessField; value: string }
-  | { type: 'load-example' }
+  | { type: 'load-example'; count?: number }
   | { type: 'randomize' }
   | { type: 'clear' }
   | { type: 'analyze'; result: AnalysisResult }
@@ -79,10 +80,13 @@ function reducer(state: State, action: Action): State {
         }),
       }
     case 'load-example':
+      {
+      const processes = exampleProcessesForCount(action.count ?? state.processes.length)
       return {
-        processes: exampleProcesses.map((process) => ({ ...process })),
-        result: simulatePreemptivePriority(exampleProcesses),
+        processes,
+        result: simulatePreemptivePriority(processes),
         attempted: false,
+      }
       }
     case 'randomize': {
       const processes = randomProcesses(state.processes.length)
@@ -113,17 +117,12 @@ function useTheme() {
 
   const toggleTheme = () => {
     const next = theme === 'dark' ? 'light' : 'dark'
-    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (reducedMotion) {
-      setTheme(next)
-      return
-    }
     const panel = document.createElement('div')
     panel.className = 'theme-sweep'
     panel.style.background = next === 'dark' ? '#111110' : '#f6f5f1'
     document.body.append(panel)
     requestAnimationFrame(() => panel.classList.add('is-moving'))
-    window.setTimeout(() => setTheme(next), 480)
+    window.setTimeout(() => setTheme(next), 420)
     panel.addEventListener('animationend', () => panel.remove(), { once: true })
   }
 
@@ -243,7 +242,7 @@ function App() {
   }
 
   const loadExample = () => {
-    dispatch({ type: 'load-example' })
+    dispatch({ type: 'load-example', count: state.processes.length })
     setSelectedTime(0)
   }
 
@@ -275,14 +274,15 @@ function App() {
     <TooltipProvider>
       <PointerEffects />
       <PortfolioCursor />
+      <FloatingPathsBackground position={1} />
       <a className="skip-link" href="#processes">Skip to process input</a>
       <header className="site-header">
         <a href="#top" className="brand" aria-label="CPIYU home">
-          <span className="brand-mark" aria-hidden="true"><b>C</b><i /><i /><i /></span>
+          <span className="brand-mark" aria-hidden="true"><i /><i /><i /><i /><i /></span>
           <span className="brand-copy"><strong>CPIYU</strong></span>
         </a>
         <p className="topic-banner">PRIORITY CPU SCHEDULING ALGORITHM: PREEMPTIVE</p>
-        <nav className="header-nav" aria-label="Page sections"><a href="#guide">Guide</a><a href="#processes">Workspace</a><a href="#results">Results</a></nav>
+        <nav className="header-nav" aria-label="Page sections"><a href="#top">Guide</a><a href="#processes">Workspace</a><a href="#results">Results</a></nav>
       </header>
 
       <main id="top">
@@ -400,7 +400,7 @@ function App() {
             <div className="analysis-grid">
               <article className="panel timeline-panel">
                 <div className="panel-heading"><div><span>Interactive Gantt chart</span><h3>CPU timeline</h3></div><code>t = {activeTime}</code></div>
-                <GanttChart result={state.result} selectedTime={activeTime} onSelectTime={setSelectedTime} onPreviewTime={setPreviewTime} />
+                <GanttChart result={state.result} selectedTime={activeTime} onSelectTime={setSelectedTime} onPreviewTime={setPreviewTime} isPlaying={isPlaying} />
                 <div className="playback-controls">
                   <button type="button" onClick={() => setSelectedTime((time) => Math.max(0, time - 1))} aria-label="Previous time"><ChevronLeft /></button>
                   <button type="button" className="play-button" onClick={() => setIsPlaying((playing) => !playing)} aria-label={isPlaying ? 'Pause timeline' : 'Play timeline'}>{isPlaying ? <Pause /> : <Play />}</button>

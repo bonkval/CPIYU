@@ -1,24 +1,29 @@
 import {
+  Activity,
   BarChart3,
   BookOpen,
   ChevronLeft,
   ChevronRight,
   CirclePlay,
   Download,
+  Gauge,
+  Keyboard,
   Moon,
   Pause,
   Play,
   Plus,
   RotateCcw,
+  Shuffle,
   Sparkles,
   Sun,
   Trash2,
+  Zap,
 } from 'lucide-react'
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react'
 import { GanttChart } from '@/components/simulator/gantt-chart'
 import { Dock, DockIcon, DockItem, DockLabel } from '@/components/ui/dock'
 import { TooltipProvider } from '@/components/ui/tooltip'
-import { createProcesses, exampleProcesses } from '@/features/scheduler/presets'
+import { createProcesses, exampleProcesses, randomProcesses } from '@/features/scheduler/presets'
 import { simulatePreemptivePriority } from '@/features/scheduler/preemptive-priority'
 import type { AnalysisResult, ProcessInput } from '@/features/scheduler/types'
 import {
@@ -37,6 +42,7 @@ type Action =
   | { type: 'set-count'; count: number }
   | { type: 'update'; index: number; field: ProcessField; value: string }
   | { type: 'load-example' }
+  | { type: 'randomize' }
   | { type: 'clear' }
   | { type: 'analyze'; result: AnalysisResult }
 
@@ -78,6 +84,10 @@ function reducer(state: State, action: Action): State {
         result: simulatePreemptivePriority(exampleProcesses),
         attempted: false,
       }
+    case 'randomize': {
+      const processes = randomProcesses(state.processes.length)
+      return { processes, result: simulatePreemptivePriority(processes), attempted: false }
+    }
     case 'clear':
       return { processes: createProcesses(3), result: null, attempted: false }
     case 'analyze':
@@ -103,7 +113,8 @@ function useTheme() {
 
   const toggleTheme = () => {
     const next = theme === 'dark' ? 'light' : 'dark'
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reducedMotion) {
       setTheme(next)
       return
     }
@@ -111,19 +122,48 @@ function useTheme() {
     panel.className = 'theme-sweep'
     panel.style.background = next === 'dark' ? '#111110' : '#f6f5f1'
     document.body.append(panel)
-    const animation = panel.animate(
-      [
-        { transform: 'translateX(-135vw) skewX(-13deg)' },
-        { transform: 'translateX(-10vw) skewX(-13deg)', offset: 0.48 },
-        { transform: 'translateX(130vw) skewX(-13deg)' },
-      ],
-      { duration: 1050, easing: 'cubic-bezier(.72,0,.22,1)', fill: 'forwards' },
-    )
-    window.setTimeout(() => setTheme(next), 500)
-    animation.finished.finally(() => panel.remove())
+    requestAnimationFrame(() => panel.classList.add('is-moving'))
+    window.setTimeout(() => setTheme(next), 480)
+    panel.addEventListener('animationend', () => panel.remove(), { once: true })
   }
 
   return { theme, toggleTheme }
+}
+
+function PortfolioCursor() {
+  useEffect(() => {
+    const finePointer = matchMedia('(pointer: fine)')
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)')
+    if (!finePointer.matches || reducedMotion.matches) return
+    const cursor = document.createElement('div')
+    cursor.className = 'portfolio-cursor'
+    cursor.setAttribute('aria-hidden', 'true')
+    cursor.innerHTML = '<span class="cursor-core"></span><span class="cursor-orbit"></span><span class="cursor-pulse"></span>'
+    document.body.append(cursor)
+    document.documentElement.classList.add('cursor-ready')
+    const move = (event: PointerEvent) => {
+      cursor.style.transform = `translate3d(${event.clientX}px, ${event.clientY}px, 0)`
+      cursor.classList.add('is-visible')
+      const target = event.target instanceof Element ? event.target.closest('a, button, select, [role="application"]') : null
+      cursor.classList.toggle('is-hovering', Boolean(target))
+    }
+    const leave = () => cursor.classList.remove('is-visible')
+    const down = () => {
+      cursor.classList.remove('is-clicking')
+      requestAnimationFrame(() => cursor.classList.add('is-clicking'))
+    }
+    window.addEventListener('pointermove', move, { passive: true })
+    window.addEventListener('pointerleave', leave, { passive: true })
+    window.addEventListener('pointerdown', down, { passive: true })
+    return () => {
+      window.removeEventListener('pointermove', move)
+      window.removeEventListener('pointerleave', leave)
+      window.removeEventListener('pointerdown', down)
+      document.documentElement.classList.remove('cursor-ready')
+      cursor.remove()
+    }
+  }, [])
+  return null
 }
 
 function PointerEffects() {
@@ -224,17 +264,15 @@ function App() {
   return (
     <TooltipProvider>
       <PointerEffects />
+      <PortfolioCursor />
       <a className="skip-link" href="#processes">Skip to process input</a>
       <header className="site-header">
-        <a href="#top" className="brand" aria-label="Priority Lab home">
-          <span>PL</span>
-          <strong>Priority Lab</strong>
+        <a href="#top" className="brand" aria-label="CPIYU CPU scheduling lab home">
+          <span className="brand-mark" aria-hidden="true"><i /><i /><i /><i /></span>
+          <span className="brand-copy"><strong>CPIYU</strong><small>CPU scheduling lab</small></span>
         </a>
-        <p>Lower number = higher priority</p>
-        <button type="button" className="theme-button" onClick={toggleTheme} aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}>
-          {theme === 'dark' ? <Sun /> : <Moon />}
-          <span>{theme === 'dark' ? 'Light' : 'Dark'}</span>
-        </button>
+        <div className="header-system" aria-live="polite"><span className="system-pulse" /><span>Scheduler online</span><code>{state.processes.length} processes</code></div>
+        <nav className="header-nav" aria-label="Page sections"><a href="#guide">Guide</a><a href="#processes">Workspace</a><a href="#results">Results</a></nav>
       </header>
 
       <main id="top">
@@ -255,6 +293,15 @@ function App() {
             <div className="visual-arrow">Arrival queue</div>
             <div className="visual-cpu"><small>CPU</small><strong>P2</strong><em>Priority 1</em></div>
             <div className="visual-note">Higher-priority arrivals can interrupt the running process.</div>
+          </div>
+        </section>
+
+        <section className="learning-strip" id="guide" aria-labelledby="guide-heading">
+          <div className="learning-heading"><span className="section-kicker">The mental model</span><h2 id="guide-heading">Three signals drive every decision.</h2></div>
+          <div className="learning-items">
+            <article><Activity /><div><strong>Arrival</strong><p>Processes enter the system at a known time.</p></div></article>
+            <article><Gauge /><div><strong>Priority</strong><p>Lower numerical values win the CPU.</p></div></article>
+            <article><Zap /><div><strong>Preemption</strong><p>A stronger arrival can interrupt the current process.</p></div></article>
           </div>
         </section>
 
@@ -316,6 +363,7 @@ function App() {
             <div className="secondary-actions">
               <button type="button" onClick={() => dispatch({ type: 'set-count', count: state.processes.length + 1 })}><Plus /> Add process</button>
               <button type="button" onClick={loadExample}><Sparkles /> Example</button>
+              <button type="button" onClick={() => dispatch({ type: 'randomize' })}><Shuffle /> Randomize</button>
               <button type="button" onClick={() => dispatch({ type: 'clear' })}><Trash2 /> Clear</button>
             </div>
             <button type="button" className="analyze-button" onClick={analyze} disabled={hasValidationErrors(errors)}>
@@ -363,6 +411,10 @@ function App() {
               <div className="panel-heading"><div><span>Completed process table</span><h3>Per-process calculations</h3></div><p>WT = TAT - BT</p></div>
               <div className="table-scroll"><table><thead><tr><th>Process</th><th>Arrival</th><th>Burst</th><th>Priority</th><th>Completion</th><th>Waiting</th><th>Turnaround</th><th>Response</th></tr></thead><tbody>{state.processes.map((process, index) => { const metric = state.result!.metrics[index]; return <tr key={process.id}><th>{process.id}</th><td>{process.arrivalTime}</td><td>{process.burstTime}</td><td>{process.priority}</td><td>{metric.completionTime}</td><td>{metric.waitingTime}</td><td>{metric.turnaroundTime}</td><td>{metric.responseTime}</td></tr> })}</tbody></table></div>
             </article>
+            <article className="panel event-log">
+              <div className="panel-heading"><div><span>Decision trail</span><h3>Why the CPU changed</h3></div><Keyboard /></div>
+              <div className="event-log-list">{state.result.slices.map((slice) => <button type="button" key={`${slice.start}-${slice.processId ?? 'idle'}`} onClick={() => setSelectedTime(slice.start)} className="event-item"><span className="event-time">{slice.start}</span><span><strong>{slice.processId ?? 'CPU idle'}</strong><small>{slice.reason === 'preemption' ? 'Higher priority process arrived' : slice.reason === 'completion' ? 'Previous process completed' : slice.reason === 'idle' ? 'No ready process' : 'Timeline began'}</small></span><ChevronRight /></button>)}</div>
+            </article>
           </section>
         ) : (
           <section className="empty-results" id="results" aria-labelledby="empty-heading"><BookOpen /><h2 id="empty-heading">Your timeline will appear here</h2><p>Enter a valid workload and select Analyze schedule.</p></section>
@@ -373,6 +425,7 @@ function App() {
         <Dock>
           <DockItem label="Process input" onClick={() => inputSection.current?.scrollIntoView({ behavior: 'smooth' })}><DockLabel>Processes</DockLabel><DockIcon><Plus /></DockIcon></DockItem>
           <DockItem label="Load example" onClick={loadExample}><DockLabel>Example</DockLabel><DockIcon><Sparkles /></DockIcon></DockItem>
+          <DockItem label="Randomize processes" onClick={() => dispatch({ type: 'randomize' })}><DockLabel>Randomize</DockLabel><DockIcon><Shuffle /></DockIcon></DockItem>
           <DockItem label="Scheduling results" disabled={!state.result} onClick={() => resultsSection.current?.scrollIntoView({ behavior: 'smooth' })}><DockLabel>Results</DockLabel><DockIcon><BarChart3 /></DockIcon></DockItem>
           <span className="dock-divider" aria-hidden="true" />
           <DockItem label={isPlaying ? 'Pause timeline' : 'Play timeline'} disabled={!state.result} active={isPlaying} onClick={() => setIsPlaying((playing) => !playing)}><DockLabel>{isPlaying ? 'Pause' : 'Play'}</DockLabel><DockIcon>{isPlaying ? <Pause /> : <Play />}</DockIcon></DockItem>

@@ -16,3 +16,12 @@ export function createProcesses(count: number): ProcessInput[] {
   }))
 }
 
+export function randomProcesses(count: number): ProcessInput[] {
+  return Array.from({ length: count }, (_, index) => ({
+    id: `P${index + 1}`,
+    arrivalTime: Math.floor(Math.random() * Math.max(1, count + 2)),
+    burstTime: Math.floor(Math.random() * 7) + 1,
+    priority: Math.floor(Math.random() * 5),
+    inputOrder: index,
+  }))
+}

@@ -354,7 +354,8 @@ tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
 
 .floating-paths { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; opacity: .9; }
 .floating-paths svg { width: 100%; height: 100%; }
-.floating-path { fill: none; stroke: var(--accent-violet); stroke-width: 1.1; vector-effect: non-scaling-stroke; }
+.floating-path { fill: none; stroke: var(--accent-violet); stroke-width: 1.1; vector-effect: non-scaling-stroke; stroke-dasharray: 0.15 0.85; animation: floating-path-drift 18s linear infinite; }
+@keyframes floating-path-drift { to { stroke-dashoffset: -1; } }
 main, .site-header, .dock-wrap { position: relative; z-index: 1; }
 .gantt-track[data-playing]::after { content: ""; position: absolute; inset: 0 auto 0 -35%; width: 35%; background: linear-gradient(90deg, transparent, color-mix(in srgb, white 58%, var(--accent-violet)), transparent); mix-blend-mode: screen; pointer-events: none; animation: gantt-scan 1.2s linear infinite; }
 .gantt-track[data-playing] .time-cursor { width: 3px; background: var(--accent-violet); box-shadow: 0 0 0 .25rem color-mix(in srgb, var(--accent-violet) 25%, transparent), 0 0 1.1rem var(--accent-violet); animation: playhead-glow .8s ease-in-out infinite alternate; }
@@ -367,6 +368,8 @@ main, .site-header, .dock-wrap { position: relative; z-index: 1; }
 :root[data-theme="dark"] .theme-sweep { box-shadow: 0 0 90px rgb(255 255 255 / 14%); }
 @media (prefers-reduced-motion: reduce) {
   .theme-sweep.is-moving { display: block !important; animation-duration: 900ms !important; animation-iteration-count: 1 !important; }
+  .floating-path { animation: floating-path-drift 18s linear infinite !important; }
+  .cursor-orbit::after { animation: cursor-spin 7s linear infinite !important; }
 }
 
 /* Keep navigation surfaces mounted above every scroll position and every background layer. */

@@ -278,7 +278,6 @@ function App() {
       <a className="skip-link" href="#processes">Skip to process input</a>
       <header className="site-header">
         <a href="#top" className="brand" aria-label="CPIYU home">
-          <span className="brand-mark" aria-hidden="true"><i /><i /><i /><i /><i /></span>
           <span className="brand-copy"><strong>CPIYU</strong></span>
         </a>
         <p className="topic-banner">PRIORITY CPU SCHEDULING ALGORITHM: PREEMPTIVE</p>

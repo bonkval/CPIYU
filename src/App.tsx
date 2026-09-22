@@ -125,7 +125,7 @@ function useTheme() {
     panel.style.background = next === 'dark' ? '#111110' : '#f6f5f1'
     document.body.append(panel)
     requestAnimationFrame(() => panel.classList.add('is-moving'))
-    window.setTimeout(() => setTheme(next), 420)
+    window.setTimeout(() => setTheme(next), 450)
     panel.addEventListener('animationend', () => panel.remove(), { once: true })
   }
 
@@ -184,6 +184,10 @@ function PointerEffects() {
         : null
       if (!button) return
 
+      button.classList.remove('is-splashing')
+      requestAnimationFrame(() => button.classList.add('is-splashing'))
+      window.setTimeout(() => button.classList.remove('is-splashing'), 850)
+
       const splash = document.createElement('span')
       splash.className = 'button-splash'
       splash.style.left = `${event.clientX}px`
@@ -199,7 +203,7 @@ function PointerEffects() {
       }
       document.body.append(splash)
       splash.addEventListener('animationend', (animationEvent) => {
-        if (animationEvent.target === splash) splash.remove()
+        if (animationEvent.animationName === 'splash-lifetime') splash.remove()
       })
     }
     window.addEventListener('pointermove', move, { passive: true })

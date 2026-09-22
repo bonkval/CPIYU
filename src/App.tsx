@@ -314,6 +314,23 @@ function App() {
           </div>
         </section>
 
+        <section className="formula-guide" aria-labelledby="formula-heading">
+          <div className="formula-intro">
+            <span className="section-kicker">Solve it by hand</span>
+            <h2 id="formula-heading">Scheduling formulas</h2>
+            <p>Draw the Gantt chart first. Then read each process&rsquo;s completion time from the point where its final CPU burst ends.</p>
+          </div>
+          <div className="formula-grid">
+            <article><span>CT</span><h3>Completion time</h3><code>CT = final finish time</code><p>The time when a process finishes all of its CPU burst.</p></article>
+            <article><span>TAT</span><h3>Turnaround time</h3><code>TAT = CT − AT</code><p>Total time from arrival until completion.</p></article>
+            <article><span>WT</span><h3>Waiting time</h3><code>WT = TAT − BT</code><p>Time spent waiting in the ready queue.</p></article>
+            <article><span>RT</span><h3>Response time</h3><code>RT = first start − AT</code><p>Time from arrival until the process first receives the CPU.</p></article>
+            <article><span>CPU</span><h3>CPU utilization</h3><code>(busy time ÷ total time) × 100</code><p>The percentage of the schedule where the CPU is executing a process.</p></article>
+            <article><span>AVG</span><h3>Class average</h3><code>Σ metric ÷ process count</code><p>Add every process value, then divide by the number of processes.</p></article>
+          </div>
+          <p className="tie-rule"><strong>Selection rule:</strong> choose the arrived process with the lowest priority number. If priorities tie, choose the earlier arrival; if both tie, keep input order.</p>
+        </section>
+
         <section className="workspace section-anchor" ref={inputSection} id="processes" aria-labelledby="process-heading">
           <div className="section-heading">
             <div>

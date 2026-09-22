@@ -368,3 +368,21 @@ main, .site-header, .dock-wrap { position: relative; z-index: 1; }
 @media (prefers-reduced-motion: reduce) {
   .theme-sweep.is-moving { display: block !important; animation-duration: 900ms !important; animation-iteration-count: 1 !important; }
 }
+
+/* Keep navigation surfaces mounted above every scroll position and every background layer. */
+.site-header { position: fixed !important; inset: 0 0 auto; z-index: 1000; }
+.dock-wrap { position: fixed !important; z-index: 1100; }
+main { padding-top: 4.5rem; }
+.dock-panel { color: var(--ink); background: var(--panel); border: 1px solid var(--line); box-shadow: 0 16px 40px color-mix(in srgb, var(--ink) 18%, transparent), 0 0 0 1px color-mix(in srgb, var(--panel) 60%, transparent); }
+.dock-item { color: var(--ink); border-color: var(--line); background: var(--soft); }
+.dock-item:hover, .dock-item[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent-violet); }
+.dock-item:disabled { color: var(--muted-ink); background: var(--soft); }
+.dock-divider { background: var(--line); }
+.dock-label { background: var(--ink); color: var(--paper); }
+.portfolio-cursor { mix-blend-mode: normal; width: 1.4rem; height: 1.4rem; margin: -.7rem 0 0 -.7rem; }
+.portfolio-cursor .cursor-core { width: .38rem; height: .38rem; background: var(--accent-violet); box-shadow: 0 0 0 .25rem color-mix(in srgb, var(--accent-violet) 18%, transparent); }
+.portfolio-cursor .cursor-orbit { border: 2px solid var(--accent-violet); box-shadow: 0 0 14px color-mix(in srgb, var(--accent-violet) 38%, transparent); }
+.portfolio-cursor .cursor-orbit::after { border-color: color-mix(in srgb, var(--accent-violet) 75%, transparent); }
+.portfolio-cursor.is-hovering { width: 2.25rem; height: 2.25rem; margin: -1.125rem 0 0 -1.125rem; }
+.portfolio-cursor.is-hovering .cursor-core { transform: translate(-50%, -50%) scale(.65); }
+@media (max-width: 640px) { main { padding-top: 5.2rem; } }

@@ -1,32 +1,13 @@
-# React + TypeScript + Vite
+# CPIYU CPU Scheduling Simulator
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+An interactive preemptive-priority CPU scheduling simulator built with React, TypeScript, and Vite. It includes editable workloads, validation, random and classroom samples, an interactive Gantt chart, scheduling metrics, a ready-queue inspector, timeline playback, and CSV export.
 
-Currently, two official plugins are available:
+## Commands
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- `npm run dev` starts the development server.
+- `npm test` runs the scheduler and validation tests.
+- `npm run lint` checks the source code.
+- `npm run build` creates the regular production build.
+- `npm run build:single` creates a self-contained HTML build in `standalone/index.html`.
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
-```
-
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+The submission artifact is `priority-scheduling-simulator.html`. Its scripts, styles, and favicon are embedded, so it can be opened without the source tree or an internet connection.

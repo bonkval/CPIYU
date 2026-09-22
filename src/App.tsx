@@ -23,7 +23,6 @@ import { useEffect, useMemo, useReducer, useRef, useState } from 'react'
 import { GanttChart } from '@/components/simulator/gantt-chart'
 import { Dock, DockIcon, DockItem, DockLabel } from '@/components/ui/dock'
 import { FloatingPathsBackground } from '@/components/ui/floating-paths'
-import { TooltipProvider } from '@/components/ui/tooltip'
 import { createBlankProcesses, createProcesses, exampleProcesses, exampleProcessesForCount, randomProcesses } from '@/features/scheduler/presets'
 import { simulatePreemptivePriority } from '@/features/scheduler/preemptive-priority'
 import type { AnalysisResult, ProcessInput } from '@/features/scheduler/types'
@@ -275,7 +274,7 @@ function App() {
   }
 
   return (
-    <TooltipProvider>
+    <>
       <PointerEffects />
       <PortfolioCursor />
       <FloatingPathsBackground position={1} />
@@ -466,7 +465,7 @@ function App() {
           <DockItem label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`} onClick={toggleTheme}><DockLabel>Theme</DockLabel><DockIcon>{theme === 'dark' ? <Sun /> : <Moon />}</DockIcon></DockItem>
         </Dock>
       </div>
-    </TooltipProvider>
+    </>
   )
 }
 

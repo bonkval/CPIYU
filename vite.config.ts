@@ -3,7 +3,6 @@ import tailwindcss from '@tailwindcss/vite'
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { defineConfig } from 'vite'
-import { viteSingleFile } from 'vite-plugin-singlefile'
 
 const faviconDataUrl = `data:image/svg+xml;base64,${readFileSync(
   new URL('./public/favicon.svg', import.meta.url),
@@ -18,7 +17,6 @@ export default defineConfig({
     },
     react(),
     tailwindcss(),
-    ...(process.env.SINGLE_FILE ? [viteSingleFile()] : []),
   ],
   resolve: {
     alias: {

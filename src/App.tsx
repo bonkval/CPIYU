@@ -350,7 +350,7 @@ function App() {
             <p>Draw the Gantt chart first. Then read each process&rsquo;s completion time from the point where its final CPU burst ends.</p>
           </div>
           <div className="formula-grid">
-            <article><span>CT</span><h3>Completion time</h3><code>CT = final finish time</code><p>The time when a process finishes all of its CPU burst.</p></article>
+            <article><span>CT</span><h3>Completion time</h3><code>CT = AT + TAT</code><p>The process&rsquo;s arrival time plus the total time from arrival until it finishes.</p></article>
             <article><span>TAT</span><h3>Turnaround time</h3><code>TAT = CT − AT</code><p>Total time from arrival until completion.</p></article>
             <article><span>WT</span><h3>Waiting time</h3><code>WT = TAT − BT</code><p>Time spent waiting in the ready queue.</p></article>
             <article><span>RT</span><h3>Response time</h3><code>RT = first start − AT</code><p>Time from arrival until the process first receives the CPU.</p></article>

@@ -29,8 +29,8 @@ export interface TimeSnapshot {
 export interface ProcessMetrics {
   processId: string
   completionTime: number
-  waitingTime: number
   turnaroundTime: number
+  waitingTime: number
   responseTime: number
 }
 
@@ -38,10 +38,9 @@ export interface AnalysisResult {
   slices: ExecutionSlice[]
   snapshots: TimeSnapshot[]
   metrics: ProcessMetrics[]
-  averageWaitingTime: number
   averageTurnaroundTime: number
+  averageWaitingTime: number
   cpuUtilization: number
   contextSwitches: number
   totalDuration: number
 }
-

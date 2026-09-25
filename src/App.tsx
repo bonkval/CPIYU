@@ -277,7 +277,7 @@ function App() {
 
   const exportCsv = () => {
     if (!state.result) return
-    const header = 'Process,Arrival,Burst,Priority,Completion,Waiting,Turnaround,Response'
+    const header = 'Process,Arrival,Burst,Priority,Completion,Turnaround,Waiting'
     const rows = state.processes.map((process, index) => {
       const metric = state.result!.metrics[index]
       return [
@@ -286,9 +286,8 @@ function App() {
         process.burstTime,
         process.priority,
         metric.completionTime,
-        metric.waitingTime,
         metric.turnaroundTime,
-        metric.responseTime,
+        metric.waitingTime,
       ].join(',')
     })
     const blob = new Blob([[header, ...rows].join('\n')], { type: 'text/csv' })
@@ -434,8 +433,8 @@ function App() {
             </div>
 
             <div className="metrics" aria-label="Schedule summary">
-              <article><span>Average waiting</span><strong>{state.result.averageWaitingTime.toFixed(2)}</strong><small>time units</small></article>
               <article><span>Average turnaround</span><strong>{state.result.averageTurnaroundTime.toFixed(2)}</strong><small>time units</small></article>
+              <article><span>Average waiting</span><strong>{state.result.averageWaitingTime.toFixed(2)}</strong><small>time units</small></article>
               <article><span>CPU utilization</span><strong>{state.result.cpuUtilization.toFixed(1)}%</strong><small>busy time</small></article>
               <article><span>Context switches</span><strong>{state.result.contextSwitches}</strong><small>process changes</small></article>
             </div>
@@ -463,7 +462,7 @@ function App() {
 
             <article className="panel results-table-panel">
               <div className="panel-heading"><div><span>Completed process table</span><h3>Per-process calculations</h3></div><p>WT = TAT - BT</p></div>
-              <div className="table-scroll"><table><thead><tr><th>Process</th><th>Arrival</th><th>Burst</th><th>Priority</th><th>Completion</th><th>Waiting</th><th>Turnaround</th><th>Response</th></tr></thead><tbody>{state.processes.map((process, index) => { const metric = state.result!.metrics[index]; return <tr key={process.id}><th>{process.id}</th><td>{process.arrivalTime}</td><td>{process.burstTime}</td><td>{process.priority}</td><td>{metric.completionTime}</td><td>{metric.waitingTime}</td><td>{metric.turnaroundTime}</td><td>{metric.responseTime}</td></tr> })}</tbody></table></div>
+              <div className="table-scroll"><table><thead><tr><th>Process</th><th>Arrival</th><th>Burst</th><th>Priority</th><th>Completion</th><th>Turnaround</th><th>Waiting</th></tr></thead><tbody>{state.processes.map((process, index) => { const metric = state.result!.metrics[index]; return <tr key={process.id}><th>{process.id}</th><td>{process.arrivalTime}</td><td>{process.burstTime}</td><td>{process.priority}</td><td>{metric.completionTime}</td><td>{metric.turnaroundTime}</td><td>{metric.waitingTime}</td></tr> })}</tbody></table></div>
             </article>
             <article className="panel event-log">
               <div className="panel-heading"><div><span>Decision trail</span><h3>Why the CPU changed</h3></div><Keyboard /></div>

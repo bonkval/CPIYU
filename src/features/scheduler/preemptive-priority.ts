@@ -90,8 +90,8 @@ export function simulatePreemptivePriority(
       responseTime: (firstStart.get(process.id) ?? process.arrivalTime) - process.arrivalTime,
     }
   })
-  const totalWaiting = metrics.reduce((sum, item) => sum + item.waitingTime, 0)
   const totalTurnaround = metrics.reduce((sum, item) => sum + item.turnaroundTime, 0)
+  const totalWaiting = metrics.reduce((sum, item) => sum + item.waitingTime, 0)
   const processSlices = slices.filter((slice) => slice.processId !== null)
   const contextSwitches = processSlices.reduce((count, slice, index) => {
     if (index === 0) return count
@@ -102,11 +102,10 @@ export function simulatePreemptivePriority(
     slices,
     snapshots,
     metrics,
-    averageWaitingTime: totalWaiting / processes.length,
     averageTurnaroundTime: totalTurnaround / processes.length,
+    averageWaitingTime: totalWaiting / processes.length,
     cpuUtilization: time === 0 ? 0 : (busyTime / time) * 100,
     contextSwitches,
     totalDuration: time,
   }
 }
-
